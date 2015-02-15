@@ -1,0 +1,11 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 3306,
+    "db": "goweb",
+    "user": "go",
+    "passwd": "go"
+  },
+  "port": 80,
+  "log": "/tmp/controller.log"
+}
