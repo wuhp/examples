@@ -1,0 +1,12 @@
+It is simple client for project 'web-framework'
+
+[ Build ]
+go build
+
+[ Test ]
+./web-client list_product
+./web-client create_product pxxx descxxx
+./web-client list_product
+./web-client show_product 1
+./web-client delete_product 1
+./web-client list_product
