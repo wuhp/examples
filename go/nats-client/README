@@ -1,0 +1,25 @@
+[ nats-server ]
+export GOPATH=$PWD
+go get github.com/apcera/gnatsd
+go install github.com/apcera/gnatsd
+
+[ nats-client ]
+go get github.com/apcera/nats
+
+cd bin
+go build ../src/client/request.go
+go build ../src/client/publish.go 
+go build ../src/client/async-subscribe.go 
+go build ../src/client/sync-subscribe.go 
+
+[ test ]
+# start nats-server
+./bin/gnatsd
+
+# publish & subscribe
+./async-subscribe abc.xyz
+./bin/publish abc.xyz "this is an async request"
+
+# request & subscribe
+./sync-subscribe abc.xyz
+./bin/request abc.xyz "this is a sync request"
