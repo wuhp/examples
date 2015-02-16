@@ -23,3 +23,9 @@ go build ../src/client/sync-subscribe.go
 # request & subscribe
 ./sync-subscribe abc.xyz
 ./bin/request abc.xyz "this is a sync request"
+
+[ tutorials ]
+nats client tutorials & examples can be found in nats source file
+
+github.com/apcera/nats/examples
+github.com/apcera/nats/README.md
