@@ -6,6 +6,6 @@
     "user": "go",
     "passwd": "go"
   },
-  "port": 80,
+  "port": 8080,
   "log": "/tmp/controller.log"
 }

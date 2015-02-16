@@ -70,7 +70,7 @@ func main() {
   }
 
   http.HandleFunc("/api/", Api)
-  http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
+  log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil))
 }
 
 
