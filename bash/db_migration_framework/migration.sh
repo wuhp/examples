@@ -4,10 +4,10 @@
 
 usage() {
   echo "Usage: "
-  echo "  $0 ping"
-  echo "  $0 current"
-  echo "  $0 latest"
-  echo "  $0 <migration num>"
+  echo "  $0 ping              test connecting to db instance"
+  echo "  $0 current           show current schema version"
+  echo "  $0 latest            migrate to latest schema version"
+  echo "  $0 <migration num>   migrate a specfied version, support backwards"
 }
 
 ping_mysql() {

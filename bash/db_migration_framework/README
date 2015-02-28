@@ -1,0 +1,33 @@
+[ Instructions ]
+
+Before running the migration script, please set the below env first.
+
+DATABASE_HOST          Host name
+DATABASE_PORT          Host port
+DATABASE_DBNAME        DB name
+DATABASE_USER          User
+DATABASE_PASSWD        Password
+MIGRATION_SCRIPT_DIR   Migration script location
+
+
+[ Example ]
+
+export DATABASE_HOST=localhost
+export DATABASE_PORT=3306
+export DATABASE_DBNAME=test
+export DATABASE_USER=root
+export DATABASE_PASSWD=root
+export MIGRATION_SCRIPT_DIR=/tmp/schema
+
+/tmp/schema/
+├── 1
+│   ├── backward.sql
+│   └── forward.sql
+├── 2
+│   ├── backward.sql
+│   └── forward.sql
+└── 3
+    ├── backward.sql
+    └── forward.sql
+
+./migration.sh latest
