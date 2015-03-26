@@ -21,7 +21,7 @@ func main() {
     fmt.Println(n)
     fmt.Println(err)
     fmt.Fprintf(os.Stdout, "Received response: %s\n", string(buf))
-    time.Sleep(1 * time.Second)
+    time.Sleep(10 * time.Second)
     conn.Close()
   }
 }
