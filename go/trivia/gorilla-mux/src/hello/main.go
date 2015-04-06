@@ -25,12 +25,23 @@ func ProcessPathVariables(w http.ResponseWriter, r *http.Request) {
   w.Write([]byte(fmt.Sprintf("Age is %s ", age)))
 }
 
+func GetHello(w http.ResponseWriter, r *http.Request) {
+  w.Write([]byte("Get Hello"))
+}
+
+func PostHello(w http.ResponseWriter, r *http.Request) {
+  w.Write([]byte("Post Hello"))
+}
+
 func main() {
   mx := mux.NewRouter()
 
   mx.HandleFunc("/", SayHelloWorld)
   mx.HandleFunc("/{name}", Greet)
   mx.HandleFunc("/person/{name}/{job}/{age:[0-9]+}", ProcessPathVariables)
+
+  mx.HandleFunc("/api/hello", GetHello).Methods("Get")
+  mx.HandleFunc("/api/hello", PostHello).Methods("Post")
 
   http.ListenAndServe(":8080", mx)
 }
