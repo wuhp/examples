@@ -30,6 +30,15 @@ func main() {
   defer nc.Close()
 
   log.Printf("Requested [%s] : '%s'\n", args[1], args[2])
-  msg, _ := nc.Request(args[1], []byte(args[2]), 100 * time.Second)
+  msg, err := nc.Request(args[1], []byte(args[2]), 1 * time.Second)
+  if err != nil {
+    if err == nats.ErrTimeout {
+      log.Printf("Timeout\n")
+    } else {
+      log.Printf("Internal error")
+    }
+    return
+  }
+
   log.Printf("Received [%s]\n", string(msg.Data))
 }
