@@ -1,0 +1,4 @@
+export GOPATH=$PWD
+go get github.com/garyburd/redigo
+go build main
+./bin/main
