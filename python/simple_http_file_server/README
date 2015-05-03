@@ -1,0 +1,4 @@
+cd /home/ubuntu/downloads
+python -m SimpleHTTPServer 8080
+
+# open http://localhost:8080 in browser
