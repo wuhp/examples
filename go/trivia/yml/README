@@ -1,4 +1,7 @@
 export GOPATH=$PWD
 go get gopkg.in/yaml.v2
-go build main
+go install main
 ./bin/main
+
+go install main001
+./bin/main001
