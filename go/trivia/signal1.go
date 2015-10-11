@@ -15,6 +15,7 @@ func main() {
 func signalListen() {
   c := make(chan os.Signal)
   signal.Notify(c)
+  // signal.Notify(c, syscall.SIGHUP, syscall.SIGUSR2)  // specified signals
   for {
     s := <-c
     fmt.Println("Get signal:", s)
