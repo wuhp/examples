@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+
+### Usage:
+###   ./copy_ssh_key.expect ip user passwd
+
+### Consider using below solution to remove the
+### host key checking, avoid typing 'yes'
+### ssh -o "StrictHostKeyChecking no" $USER@$HOST
+
+### This script could be executed for more than once
+### copy_ssh_key.expect xxx xxx xxx  -> return 0
+### copy_ssh_key.expect xxx xxx xxx  -> return 0
+
+set timeout -1
+set ip [lindex $argv 0]
+set user [lindex $argv 1]
+set passwd [lindex $argv 2]
+
+spawn ssh-copy-id "-p22 $user@$ip"
+expect {
+        "*yes/no" { send "yes\r"; exp_continue }
+        "*password:" { send "$passwd\r"; exp_continue }
+        eof
+}
