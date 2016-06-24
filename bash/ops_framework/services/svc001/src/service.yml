@@ -1,0 +1,5 @@
+redis:
+    image: daocloud.io/redis:3.0
+    restart: always
+    ports:
+    - 6379

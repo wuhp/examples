@@ -1,0 +1,125 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage:"
+  echo "  $0 sync"
+  echo "  $0 list_service"
+  echo "  $0 list_instance <service>"
+  echo "  $0 prepare <service> <instance>"
+  echo "  $0 upgrade <service> <instance>"
+  echo "  $0 start <service> <instance>"
+  echo "  $0 stop <service> <instance>"
+  echo "  $0 restart <service> <instance>"
+}
+
+service_exist() {
+  [ -d ${base_dir}/services/$1 ]
+}
+
+instance_exist() {
+  service_exist $1 || return 1
+
+  for ins in `list_instance $1`
+  do
+    [ "${ins}" = "$2" ] && return 0
+  done
+
+  return 1
+}
+
+list_service() {
+  for svc in `ls ${base_dir}/services`
+  do
+    echo ${svc}
+  done
+}
+
+list_instance() {
+  cat ${base_dir}/services/$1/instance.list | sed "s/#.*$//g" | grep -v "^ *$" | sed "s/^ *//g"
+}
+
+prepare_instance() {
+  ssh ${login_user}@$2 mkdir -p ${remote_workdir}/$1/latest
+  scp -r ${base_dir}/services/$1/* ${login_user}@$2:${remote_workdir}/$1/latest > /dev/null
+  ssh ${login_user}@$2 ${remote_workdir}/$1/latest/prepare.sh > /dev/null
+}
+
+upgrade_instance() {
+  ts=`date +%F_%T`
+  ssh ${login_user}@$2 test -d ${remote_workdir}/$1/latest
+  [ $? -ne 0 ] && echo "ERROR: have already upgraded!" && return 1
+  ssh ${login_user}@$2 bash -s > /dev/null << EOF
+set -e
+if [ -d ${remote_workdir}/$1/running ]; then
+  ${remote_workdir}/$1/running/stop.sh
+  mv ${remote_workdir}/$1/running ${remote_workdir}/$1/${ts}
+fi
+mv ${remote_workdir}/$1/latest ${remote_workdir}/$1/running
+${remote_workdir}/$1/running/start.sh
+EOF
+}
+
+start_instance() {
+  ssh ${login_user}@$2 ${remote_workdir}/$1/running/start.sh
+}
+
+stop_instance() {
+  ssh ${login_user}@$2 ${remote_workdir}/$1/running/stop.sh
+}
+
+restart_instance() {
+  ssh ${login_user}@$2 ${remote_workdir}/$1/running/restart.sh
+}
+
+#
+# main
+#
+
+[ $# -lt 1 ] && usage && exit 1
+
+base_dir=`dirname $0`
+remote_workdir="/tmp/rd"
+login_user="wuhp"
+
+op=$1
+shift
+
+case ${op} in
+  sync)
+    (cd ${base_dir}; git pull)
+  ;;
+  list_service)
+    list_service
+  ;;
+  list_instance)
+    if ! service_exist $1; then
+      echo "ERROR: service $1 not found!"
+      exit 1
+    fi
+    list_instance $1
+  ;;
+  prepare|upgrade|start|stop|restart)
+    if [ "$2" != "" ]; then
+      if ! instance_exist $1 $2; then
+        echo "ERROR: instance $2 of service $1 not found!"
+        exit 1
+      fi
+      ${op}_instance $1 $2
+      [ $? -eq 0 ] && echo "[   OK   ]   ${op}   service=$1   instance=$2" || echo "[ Failed ]   ${op}   service=$1   instance=$2"
+    else
+      if ! service_exist $1; then
+        echo "ERROR: service $1 not found!"
+        exit 1
+      fi
+      for ins in `list_instance $1`
+      do
+        ${op}_instance $1 ${ins}
+        [ $? -eq 0 ] && echo "[   OK   ]   ${op}   service=$1   instance=$2" || echo "[ Failed ]   ${op}   service=$1   instance=$2"
+      done
+    fi
+  ;;
+  *)
+    usage
+    exit 1
+  ;;
+esac

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# remote server should be ssh without password
+
+if [ $# -lt 3 ]; then
+  echo "usage: $0 <user> <ip> <cmd> ..."
+  exit 1
+fi
+
+user=$1
+ip=$2
+
+shift
+shift
+
+ssh ${user}@${ip} $*
