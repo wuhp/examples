@@ -138,3 +138,38 @@ class TestTree:
     result = []
     alg.tree_rear_visit(tree_node, result)
     assert result == [6,9,8,5,14,12,15,10]
+
+@pytest.fixture
+def unsort_list():
+  return [0,1,10,9,8,7,6,5,4,2,3]
+
+class TestSort:
+  def test_merge_sort_001(self, unsort_list):
+    result = [i for i in range(11)]
+    assert result == alg.merge_sort(unsort_list)
+
+  def test_merge_sort_002(self):
+    assert 0 == len(alg.merge_sort([]))
+
+  def test_merge_sort_003(self):
+    assert [1] == alg.merge_sort([1])
+
+  def test_quick_sort_001(self, unsort_list):
+    result = [i for i in range(11)]
+    alg.quick_sort(unsort_list)
+    assert result == unsort_list
+
+  def test_quick_sort_002(self):
+    arr = []
+    alg.quick_sort(arr)
+    assert 0 == len(arr)
+
+  def test_quick_sort_003(self):
+    arr = [5,4,4,5,5,5]
+    alg.quick_sort(arr)
+    assert [4,4,5,5,5,5] == arr
+
+  def test_quick_sort_004(self):
+    arr = [5,5,5,5]
+    alg.quick_sort(arr)
+    assert [5,5,5,5] == arr
