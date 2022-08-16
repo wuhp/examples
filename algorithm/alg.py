@@ -1,5 +1,7 @@
 # coding:utf-8
 
+import heapq
+
 from Queue import LifoQueue
 from copy import deepcopy
 
@@ -387,3 +389,89 @@ def _perm(mapping):
         m[first] = m[first] - 1
       for p in perm(m):
         yield [first] + p
+
+### 堆算法
+### 有一堆石头，每块石头的重量都是正整数。
+### 每一回合，从中选出两块 最重的 石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
+###   如果 x == y，那么两块石头都会被完全粉碎；
+###   如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
+### 最后，最多只会剩下一块石头。返回此石头的重量。如果没有石头剩下，就返回 0。
+def lastStoneWeight(self, stones):
+  """
+  :type stones: List[int]
+  :rtype: int
+  """
+  stones = [-x for x in stones]
+  heapq.heapify(stones)
+  while True:
+    if len(stones) == 1:
+      return -stones[0]
+    if len(stones) == 0:
+      return 0
+    s1 = heapq.heappop(stones)
+    s2 = heapq.heappop(stones)
+    if s1 == s2:
+      continue
+    heapq.heappush(stones, -abs(s1-s2))
+
+### 堆算法 - 返回前 K 大的项
+### 给定一个单词列表 words 和一个整数 k ，返回前 k 个出现次数最多的单词。
+### 返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字典顺序排序
+def topKFrequent(self, words, k):
+  """
+  :type words: List[str]
+  :type k: int
+  :rtype: List[str]
+  """
+  mapping = {}
+  for _, w in enumerate(words):
+    mapping[w] = mapping.get(w, 0) + 1
+
+  pairs = []
+  for key, val in mapping.items():
+    pairs.append((val, key))
+
+  result = heapq.nsmallest(k, pairs, key=lambda x: (-x[0], x[1]))
+  return [x[1] for x in result]
+
+### 迷宫 - 图的深度遍历
+### https://leetcode.cn/problems/word-search/
+def exist_p1(self, board, word):
+  """
+  :type board: List[List[str]]
+  :type word: str
+  :rtype: bool
+  """
+  visited = []
+  for _ in range(len(board)):
+    visited.append([False]*len(board[0]))
+
+  for i in range(len(board)):
+    for j in range(len(board[0])):
+      if _match_p1(board, i, j, word, visited):
+        return True
+
+  return False
+
+def _next_cell_p1(board, i, j, visited):
+  for x, y in [(i+1,j), (i-1,j), (i,j+1), (i,j-1)]:
+    if x < 0 or y < 0 or x >= len(board) or y >= len(board[0]):
+      continue
+    if visited[x][y]:
+      continue
+    yield (x,y)
+
+def _match_p1(board, i, j, word, visited):
+  if board[i][j] != word[0]:
+    return False
+
+  if len(word) == 1:
+    return True
+
+  visited[i][j] = True
+  for x, y in _next_cell_p1(board, i, j, visited):
+    if match(board, x, y, word[1:], visited):
+      return True
+
+  visited[i][j] = False
+  return False
